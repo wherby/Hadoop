@@ -1,0 +1,37 @@
+# for Howwork 4
+show_views_file = sc.textFile("input/join2_gennum?.txt")
+
+def split_show_views(line):
+    words=line.split(',')
+    # turn the count to an integer  
+    show=words[0]
+    views= int(words[1])
+    return (show, views)
+
+show_views = show_views_file.map(split_show_views)
+
+show_channel_file = sc.textFile("input/join2_genchan?.txt")
+def split_show_channel(line):
+    words=line.split(',') 
+    show=words[0]
+    channel= words[1]
+    return (show, channel)
+
+show_channel = show_channel_file.map(split_show_channel)
+
+
+joined_dataset = show_views.join(show_channel)
+
+def extract_channel_views(show_views_channel): 
+    value=show_views_channel[1]
+    channel=value[1]
+    views=value[0]
+    return (channel, views)
+channel_views = joined_dataset.map(extract_channel_views)
+
+
+def some_function(a, b):
+    some_result=a+b
+    return some_result
+
+channel_views.reduceByKey(some_function).collect()
